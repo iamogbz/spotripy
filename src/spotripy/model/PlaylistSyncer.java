@@ -119,10 +119,6 @@ public class PlaylistSyncer {
         System.out.println();
     }
 
-    private String fit(String text, int length) {
-        return fit(text, length, "", "");
-    }
-
     private String fit(String text, int length, String prefix, String suffix) {
         StringBuilder sb = new StringBuilder(prefix + text);
         sb.setLength(length - suffix.length());

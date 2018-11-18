@@ -46,15 +46,9 @@ public class SpotifyREST {
      * @return new HttpsURLConnection or NULL on failure
      * @throws MalformedURLException if URL is not properly formatted
      */
+    @Nullable
     private static HttpsURLConnection connect(String url) throws MalformedURLException {
-        URL apiUrl = new URL(url);
-        try {
-            conn = (HttpsURLConnection) apiUrl.openConnection();
-            return conn;
-        } catch (IOException ex) {
-            logger.log(Level.SEVERE, null, ex);
-        }
-        return null;
+        return connect(url, null);
     }
 
     /**
@@ -65,10 +59,11 @@ public class SpotifyREST {
      * @return new HttpsURLConnection or NULL on failure
      * @throws MalformedURLException if URL is not properly formatted
      */
-    private static HttpsURLConnection connect(String url, Proxy proxy) throws MalformedURLException {
+    private static HttpsURLConnection connect(String url, @Nullable Proxy proxy) throws MalformedURLException {
         URL apiUrl = new URL(url);
+        Proxy connProxy = proxy == null ? Proxy.NO_PROXY : proxy;
         try {
-            conn = (HttpsURLConnection) apiUrl.openConnection(proxy);
+            return apiUrl.openConnection(connProxy);
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
