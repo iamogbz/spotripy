@@ -144,7 +144,7 @@ public class PlaylistSyncer {
     }
 
     public boolean sync() throws Exception {
-        ChanteyFinder finder = new Mp3Skull();
+        ChanteyFinder finder = new EasyYouTube();
         if (downloadSavePath == null || downloadSavePath.isEmpty()) {
             throw new PlaylistSyncException("Download folder not supplied");
         } else {
