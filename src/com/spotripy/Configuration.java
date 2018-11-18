@@ -125,16 +125,17 @@ public class Configuration {
      * Save the application properties in the configuration file.
      */
     protected void saveProperties() {
-        try (FileOutputStream fos = new FileOutputStream(configFile);) {
+        try {
             if (configFile.canWrite()) {
                 synchronized (configFile) {
                     if (configFile.exists()) {
                         configFile.delete();
                     }
                     configFile.createNewFile();
+                    FileOutputStream fos = new FileOutputStream(configFile);
                     props.store(fos, "Spotripy Configuration");
+                    fos.close();
                 }
-                fos.close();
             } else {
                 throw new IOException("Can not write to config file");
             }
