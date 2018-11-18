@@ -183,9 +183,7 @@ public class PlaylistSyncer {
                             new Object[] { playlist.name, playlist.tracks.size() });
                     // --- create playlist folder
                     logger.info("Preparing playlist download folder");
-                    String folderName = sanitize(playlist.name);
-                    // Check if file already exists and if
-                    // the file size is larger than the min
+                    String folderName = "spotripy." + sanitize(playlist.name);
                     File playlistFolder = new File(downloadSavePath + File.separator + folderName);
                     logger.log(Level.INFO, "Path: {0}", playlistFolder.getAbsolutePath());
                     playlistFolder.mkdir(); // FileUtils creates folder on download
