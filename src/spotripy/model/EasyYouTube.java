@@ -3,30 +3,19 @@ package spotripy.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.HttpURLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.Connection.Response;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
- * Wrapper class for performing searches
  *
  * @author Emmanuel
  */
 public class EasyYouTube implements ChanteyFinder {
 
-    /**
-     * User agent to identify the request. So that mp3skull.com server plays nice.
-     */
     private static String USER_AGENT = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11";
 
     private static String getResponse(URLConnection conn) throws IOException {
@@ -50,28 +39,19 @@ public class EasyYouTube implements ChanteyFinder {
         youTubeConn.setRequestProperty("x-youtube-client-name", "1");
         youTubeConn.setRequestProperty("x-youtube-client-version", "2.20181115");
         String youTubeResponse = getResponse(youTubeConn);
-        JSONArray value = new JSONArray(youTubeResponse);
-        String videoId = value
-            .getJSONObject(1)
-            .getJSONObject("response")
-            .getJSONObject("contents")
-            .getJSONObject("twoColumnSearchResultsRenderer")
-            .getJSONObject("primaryContents")
-            .getJSONObject("sectionListRenderer")
-            .getJSONArray("contents")
-            .getJSONObject(0)
-            .getJSONObject("itemSectionRenderer")
-            .getJSONArray("contents")
-            .getJSONObject(0)
-            .getJSONObject("videoRenderer")
-            .getString("videoId");
-        String easyURL = String.format("https://www.easy-youtube-mp3.com/download.php?v=%s", videoId);
-        Document easyPage = Jsoup
-            .connect(easyURL)
-            .header("Cache-Control", "no-cache")
-            .userAgent(USER_AGENT)
-            .get();
-        return easyPage.select(".btn.btn-success").get(0).attr("href");
+        try {
+            JSONArray value = new JSONArray(youTubeResponse);
+            String videoId = value.getJSONObject(1).getJSONObject("response").getJSONObject("contents")
+                    .getJSONObject("twoColumnSearchResultsRenderer").getJSONObject("primaryContents")
+                    .getJSONObject("sectionListRenderer").getJSONArray("contents").getJSONObject(0)
+                    .getJSONObject("itemSectionRenderer").getJSONArray("contents").getJSONObject(0)
+                    .getJSONObject("videoRenderer").getString("videoId");
+            String easyURL = String.format("https://www.easy-youtube-mp3.com/download.php?v=%s", videoId);
+            return Jsoup.connect(easyURL).header("Cache-Control", "no-cache").userAgent(USER_AGENT).get()
+                    .select(".btn.btn-success").get(0).attr("href");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static String sanitize(String name) {
