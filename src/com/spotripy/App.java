@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Emmanuel
+ * @since 2012
  */
 public class App {
 

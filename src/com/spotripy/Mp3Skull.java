@@ -11,9 +11,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 /**
- * Wrapper class for performing searches
- *
+ * Does not work since mp3skull is down
  * @author Emmanuel
+ * @deprecated
  */
 public class Mp3Skull implements ChanteyFinder {
 
