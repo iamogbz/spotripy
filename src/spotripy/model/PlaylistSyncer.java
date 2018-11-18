@@ -19,8 +19,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +39,7 @@ public class PlaylistSyncer {
     private final static long MAX_FILE_SIZE = 1024 * 1024 * 20; // 20MB
     private final static String FILE_EXT = "mp3";
     private final static Logger logger = Logger.getLogger(PlaylistSyncer.class.getName());
-
+    private final static String USER_AGENT = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11";
     private final Configuration config; // playlist sync persitent config
     private HashMap<String, String> cacheDb; // playlist sync download url cacheDb
 
@@ -203,7 +203,7 @@ public class PlaylistSyncer {
                             String downloadLink = cacheDb.get(track);
                             if (downloadLink == null) {
                                 try {
-                                    logger.log(Level.INFO, "Searching for ''{0}''", new Object[]{ track });
+                                    logger.log(Level.INFO, "Searching for ''{0}''", new Object[] { track });
                                     downloadLink = finder.getDownloadLink(track);
                                 } catch (IOException ex) {
                                     // logger.log(Level.INFO, null, ex);
@@ -221,7 +221,7 @@ public class PlaylistSyncer {
                                     copyURLToFile(downloadURL, mp3File);
                                     cacheDb.put(track, downloadLink);
                                 } catch (Exception ex) {
-                                    logger.log(Level.INFO, "Unable to download: {0}", downloadLink);
+                                    logger.log(Level.INFO, null, ex);
                                     // cacheDb.remove(track); // remove failed URL from cache
                                 } finally {
                                     saveCache(folderName);
@@ -249,22 +249,18 @@ public class PlaylistSyncer {
     private static void copyURLToFile(URL url, File file) throws Exception {
         // FileUtils.copyURLToFile(url, file); // Apache Commons
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestProperty("Content-Type", "application/force-download");
         conn.addRequestProperty("Accept", "*/*");
-        conn.addRequestProperty("User-Agent", "PLS 1.0");
+        conn.setRequestProperty("User-Agent", USER_AGENT);
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestProperty("Pragma", "no-cache");
         conn.setInstanceFollowRedirects(false);
-        Long byteSize = conn.getContentLengthLong();
-        // only try copy if potential download is larger than minimum
-        if (byteSize > MIN_FILE_SIZE && byteSize <= MAX_FILE_SIZE) {
-            Long bytesWritten;
-            try (InputStream in = conn.getInputStream()) {
-                logger.log(Level.INFO, "Download started {0}", file.getName());
-                bytesWritten = Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
+        Long bytesWritten;
+        ReadableByteChannel readChannel = Channels.newChannel(conn.getInputStream());
+        try (FileOutputStream fos = new FileOutputStream(file.getAbsolutePath())) {
+            logger.log(Level.INFO, "Download started {0}", file.getName());
+            bytesWritten = fos.getChannel().transferFrom(readChannel, 0, Long.MAX_VALUE);
             logger.log(Level.INFO, "Content Length: {0}. Bytes Written: {1}.",
                     new Object[] { conn.getContentLengthLong(), bytesWritten });
-        } else {
-            throw new IOException("File size not within allowed range. " + byteSize + " bytes.");
         }
     }
 
