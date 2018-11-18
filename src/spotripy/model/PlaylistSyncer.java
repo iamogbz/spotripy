@@ -24,7 +24,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.json.JSONObject;
+
 import spotripy.model.SpotifyREST.Playlist;
 
 /**
@@ -249,7 +251,7 @@ public class PlaylistSyncer {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/force-download");
         conn.addRequestProperty("Accept", "*/*");
-        conn.addRequestProperty("User-Agent", "FDM 3.x");
+        conn.addRequestProperty("User-Agent", "PLS 1.0");
         conn.setInstanceFollowRedirects(false);
         Long byteSize = conn.getContentLengthLong();
         // only try copy if potential download is larger than minimum
@@ -271,6 +273,7 @@ public class PlaylistSyncer {
      */
     public static class PlaylistSyncException extends Exception {
 
+        private static final long serialVersionUID = 1;
         private final String message;
 
         /**
@@ -290,6 +293,9 @@ public class PlaylistSyncer {
     }
 
     public static class InaccessibleFolderException extends PlaylistSyncException {
+
+        private static final long serialVersionUID = 1;
+
         /**
          * Create new exception.
          *
@@ -301,6 +307,8 @@ public class PlaylistSyncer {
     }
 
     public static class PlaylistNotFoundException extends Exception {
+
+        private static final long serialVersionUID = 1;
 
         /**
          * Create new exception.
@@ -314,6 +322,8 @@ public class PlaylistSyncer {
 
     public static class ExpiredTokenException extends Exception {
 
+        private static final long serialVersionUID = 1;
+
         /**
          * Create new exception.
          *
@@ -325,6 +335,8 @@ public class PlaylistSyncer {
     }
 
     public static class TrackDownloadException extends Exception {
+
+        private static final long serialVersionUID = 1;
 
         /**
          * Create new exception.

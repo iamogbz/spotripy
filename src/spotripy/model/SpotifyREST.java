@@ -19,7 +19,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.net.ssl.HttpsURLConnection;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -46,7 +48,6 @@ public class SpotifyREST {
      * @return new HttpsURLConnection or NULL on failure
      * @throws MalformedURLException if URL is not properly formatted
      */
-    @Nullable
     private static HttpsURLConnection connect(String url) throws MalformedURLException {
         return connect(url, null);
     }
@@ -59,11 +60,11 @@ public class SpotifyREST {
      * @return new HttpsURLConnection or NULL on failure
      * @throws MalformedURLException if URL is not properly formatted
      */
-    private static HttpsURLConnection connect(String url, @Nullable Proxy proxy) throws MalformedURLException {
+    private static HttpsURLConnection connect(String url, Proxy proxy) throws MalformedURLException {
         URL apiUrl = new URL(url);
         Proxy connProxy = proxy == null ? Proxy.NO_PROXY : proxy;
         try {
-            return apiUrl.openConnection(connProxy);
+            return (HttpsURLConnection) apiUrl.openConnection(connProxy);
         } catch (IOException ex) {
             logger.log(Level.SEVERE, null, ex);
         }
