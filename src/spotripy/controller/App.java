@@ -28,6 +28,11 @@ public class App {
         String input = "";
         Context context = Context.ROOT;
         PlaylistSyncer playcer = new PlaylistSyncer();
+        try {
+            playcer.loadConfig();
+        } catch (Exception e) {
+            // do nothing
+        }
         do {
             if (input.length() < 0) {
                 logger.log(Level.WARNING, "Weird input ''{0}''", input);

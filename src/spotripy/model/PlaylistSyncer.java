@@ -203,6 +203,7 @@ public class PlaylistSyncer {
                             String downloadLink = cacheDb.get(track);
                             if (downloadLink == null) {
                                 try {
+                                    logger.log(Level.INFO, "Searching for ''{0}''", new Object[]{ track });
                                     downloadLink = finder.getDownloadLink(track);
                                 } catch (IOException ex) {
                                     // logger.log(Level.INFO, null, ex);
