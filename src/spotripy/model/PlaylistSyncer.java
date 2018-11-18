@@ -36,8 +36,7 @@ public class PlaylistSyncer {
     private final static long MIN_FILE_SIZE = 1024 * 1024 * 3; // 3MB
     private final static long MAX_FILE_SIZE = 1024 * 1024 * 20; // 20MB
     private final static String FILE_EXT = "mp3";
-    private final static Logger logger
-            = Logger.getLogger(PlaylistSyncer.class.getName());
+    private final static Logger logger = Logger.getLogger(PlaylistSyncer.class.getName());
 
     private final Configuration config; // playlist sync persitent config
     private HashMap<String, String> cacheDb; // playlist sync download url cacheDb
@@ -72,14 +71,12 @@ public class PlaylistSyncer {
     }
 
     private void loadCache(String playlistFolder) {
-        File cacheFile = new File(downloadSavePath + File.separator
-                + playlistFolder + File.separator + ".cache");
+        File cacheFile = new File(downloadSavePath + File.separator + playlistFolder + File.separator + ".cache");
         cacheDb = new HashMap<>();
-        try (
-                InputStream file = new FileInputStream(cacheFile);
+        try (InputStream file = new FileInputStream(cacheFile);
                 InputStream buffer = new BufferedInputStream(file);
                 ObjectInput input = new ObjectInputStream(buffer);) {
-            //deserialize the List
+            // deserialize the List
             cacheDb = (HashMap<String, String>) input.readObject();
         } catch (ClassNotFoundException ex) {
             logger.log(Level.WARNING, "Cannot load cache. No interpreter.");
@@ -89,8 +86,7 @@ public class PlaylistSyncer {
     }
 
     private synchronized void saveCache(String playlistName) {
-        File cacheFile = new File(downloadSavePath + File.separator
-                + playlistName + File.separator + ".cache");
+        File cacheFile = new File(downloadSavePath + File.separator + playlistName + File.separator + ".cache");
         try (OutputStream file = new FileOutputStream(cacheFile);
                 OutputStream buffer = new BufferedOutputStream(file);
                 ObjectOutput output = new ObjectOutputStream(buffer);) {
@@ -106,10 +102,8 @@ public class PlaylistSyncer {
     public void loadConfig() {
         userID = config.getProperty("user-id", userID);
         playlistID = config.getProperty("playlist-id", playlistID);
-        downloadSavePath = config.getProperty("playlist-folder",
-                downloadSavePath);
-        spotifyAccessToken = config.getProperty("spotify-oauth-token",
-                spotifyAccessToken);
+        downloadSavePath = config.getProperty("playlist-folder", downloadSavePath);
+        spotifyAccessToken = config.getProperty("spotify-oauth-token", spotifyAccessToken);
     }
 
     /**
@@ -119,11 +113,9 @@ public class PlaylistSyncer {
         int len = 23;
         String prefix = "", suffix = ": ";
         System.out.println(header("CONFIGURATION"));
-        System.out.println(fit("User ID", len, prefix, suffix) + userID + "\n"
-                + fit("Playlist ID", len, prefix, suffix) + playlistID + "\n"
-                + fit("Playlist Folder", len, prefix, suffix) + downloadSavePath + "\n"
-                + fit("Spotify Oauth Token", len, prefix, suffix) + spotifyAccessToken
-        );
+        System.out.println(fit("User ID", len, prefix, suffix) + userID + "\n" + fit("Playlist ID", len, prefix, suffix)
+                + playlistID + "\n" + fit("Playlist Folder", len, prefix, suffix) + downloadSavePath + "\n"
+                + fit("Spotify Oauth Token", len, prefix, suffix) + spotifyAccessToken);
         System.out.println();
     }
 
@@ -159,16 +151,12 @@ public class PlaylistSyncer {
         } else {
             File downloadFolder = new File(downloadSavePath);
             if (!downloadFolder.exists()) {
-                throw new InaccessibleFolderException("Path '"
-                        + downloadSavePath + "' does not exist");
+                throw new InaccessibleFolderException("Path '" + downloadSavePath + "' does not exist");
             } else if (!downloadFolder.isDirectory()) {
-                throw new InaccessibleFolderException("Path '"
-                        + downloadSavePath + "' is not a folder");
+                throw new InaccessibleFolderException("Path '" + downloadSavePath + "' is not a folder");
             } else if (!downloadFolder.canWrite()) {
-                throw new InaccessibleFolderException("Path '"
-                        + downloadSavePath + "' is not writable");
-            } else if (userID == null || playlistID == null
-                    || userID.isEmpty() || playlistID.isEmpty()) {
+                throw new InaccessibleFolderException("Path '" + downloadSavePath + "' is not writable");
+            } else if (userID == null || playlistID == null || userID.isEmpty() || playlistID.isEmpty()) {
                 throw new PlaylistNotFoundException("User/Playlist not supplied");
             } else if (spotifyAccessToken == null || spotifyAccessToken.isEmpty()) {
                 throw new PlaylistSyncException("OAuth Access Token not supplied");
@@ -181,45 +169,38 @@ public class PlaylistSyncer {
                     playlist = SpotifyREST.getPlaylist(userID, playlistID);
                 } catch (Exception ex) {
                     switch (SpotifyREST.getResponseCode()) {
-                        case 401:
-                            String message = new JSONObject(
-                                    SpotifyREST.getResponseBody().trim())
-                                    .getJSONObject("error")
-                                    .getString("message");
-                            throw new ExpiredTokenException(message);
-                        default:
-                            throw new IOException("Connection Error", ex);
+                    case 401:
+                        String message = new JSONObject(SpotifyREST.getResponseBody().trim()).getJSONObject("error")
+                                .getString("message");
+                        throw new ExpiredTokenException(message);
+                    default:
+                        throw new IOException("Connection Error", ex);
                     }
                 }
                 if (playlist == null) {
                     throw new PlaylistNotFoundException("Playlist not retrieved");
                 } else {
                     logger.log(Level.INFO, "Playlist: {0} ({1} tracks)",
-                            new Object[]{playlist.name, playlist.tracks.size()});
-                    //--- create playlist folder
+                            new Object[] { playlist.name, playlist.tracks.size() });
+                    // --- create playlist folder
                     logger.info("Preparing playlist download folder");
                     String folderName = sanitize(playlist.name);
                     // Check if file already exists and if
                     // the file size is larger than the min
-                    File playlistFolder = new File(
-                            downloadSavePath + File.separator + folderName);
-                    logger.log(Level.INFO, "Path: {0}",
-                            playlistFolder.getAbsolutePath());
-                    playlistFolder.mkdir(); //FileUtils creates folder on download
+                    File playlistFolder = new File(downloadSavePath + File.separator + folderName);
+                    logger.log(Level.INFO, "Path: {0}", playlistFolder.getAbsolutePath());
+                    playlistFolder.mkdir(); // FileUtils creates folder on download
                     loadCache(folderName); // load cacheDb of download urls
-                    //--- loop through tracks and try downloading
+                    // --- loop through tracks and try downloading
                     logger.info("Searching mp3skull for download links");
                     for (String track : playlist.tracks) {
-                        File mp3File = new File(playlistFolder.getAbsolutePath()
-                                + File.separator + sanitize(track) + "." + FILE_EXT);
+                        File mp3File = new File(
+                                playlistFolder.getAbsolutePath() + File.separator + sanitize(track) + "." + FILE_EXT);
                         // Check if file already exists and if
                         // the file size is larger than the min
-                        if (mp3File.exists()
-                                && mp3File.length() > MIN_FILE_SIZE) {
-                            logger.log(Level.INFO,
-                                    "Track already downloaded: ''{0}'' {1}",
-                                    new Object[]{mp3File.getName(),
-                                        mp3File.getParent()});
+                        if (mp3File.exists() && mp3File.length() > MIN_FILE_SIZE) {
+                            logger.log(Level.INFO, "Track already downloaded: ''{0}'' {1}",
+                                    new Object[] { mp3File.getName(), mp3File.getParent() });
                         } else {
                             boolean usingCache = false;
                             String downloadLink = cacheDb.get(track);
@@ -227,7 +208,7 @@ public class PlaylistSyncer {
                                 try {
                                     downloadLink = Mp3Skull.getDownloadLink(track);
                                 } catch (IOException ex) {
-                                    //logger.log(Level.INFO, null, ex);
+                                    // logger.log(Level.INFO, null, ex);
                                 }
                             } else {
                                 usingCache = true;
@@ -238,15 +219,12 @@ public class PlaylistSyncer {
                                 try {
                                     URL downloadURL = new URL(downloadLink);
                                     logger.log(Level.INFO, "Downloading ''{0}'' {1} {2}",
-                                            new Object[]{track,
-                                                usingCache ? ">u>" : "<n<",
-                                                downloadLink});
+                                            new Object[] { track, usingCache ? ">u>" : "<n<", downloadLink });
                                     copyURLToFile(downloadURL, mp3File);
                                     cacheDb.put(track, downloadLink);
                                 } catch (Exception ex) {
-                                    logger.log(Level.INFO, "Unable to download: {0}",
-                                            downloadLink);
-                                    //cacheDb.remove(track); // remove failed URL from cache
+                                    logger.log(Level.INFO, "Unable to download: {0}", downloadLink);
+                                    // cacheDb.remove(track); // remove failed URL from cache
                                 } finally {
                                     saveCache(folderName);
                                 }
@@ -266,12 +244,12 @@ public class PlaylistSyncer {
      * @return the sanitised string
      */
     private static String sanitize(String name) {
-        //return URLEncoder.encode(name, StandardCharsets.UTF_8.displayName());
+        // return URLEncoder.encode(name, StandardCharsets.UTF_8.displayName());
         return name.replaceAll("[^a-zA-Z0-9.-]+", "_");
     }
 
     private static void copyURLToFile(URL url, File file) throws Exception {
-        //FileUtils.copyURLToFile(url, file); // Apache Commons
+        // FileUtils.copyURLToFile(url, file); // Apache Commons
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestProperty("Content-Type", "application/force-download");
         conn.addRequestProperty("Accept", "*/*");
@@ -279,19 +257,16 @@ public class PlaylistSyncer {
         conn.setInstanceFollowRedirects(false);
         Long byteSize = conn.getContentLengthLong();
         // only try copy if potential download is larger than minimum
-        if (byteSize > MIN_FILE_SIZE
-                && byteSize <= MAX_FILE_SIZE) {
+        if (byteSize > MIN_FILE_SIZE && byteSize <= MAX_FILE_SIZE) {
             Long bytesWritten;
             try (InputStream in = conn.getInputStream()) {
                 logger.log(Level.INFO, "Download started {0}", file.getName());
-                bytesWritten = Files.copy(in, file.toPath(),
-                        StandardCopyOption.REPLACE_EXISTING);
+                bytesWritten = Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
             logger.log(Level.INFO, "Content Length: {0}. Bytes Written: {1}.",
-                    new Object[]{conn.getContentLengthLong(), bytesWritten});
+                    new Object[] { conn.getContentLengthLong(), bytesWritten });
         } else {
-            throw new IOException("File size not within allowed range. "
-                    + byteSize + " bytes.");
+            throw new IOException("File size not within allowed range. " + byteSize + " bytes.");
         }
     }
 
@@ -319,7 +294,6 @@ public class PlaylistSyncer {
     }
 
     public static class InaccessibleFolderException extends PlaylistSyncException {
-
         /**
          * Create new exception.
          *

@@ -25,7 +25,7 @@ public class Configuration {
      * The name of our properties file.
      */
     public static final String CONFIG_FILENAME = "spotripy.config";
-    
+
     /**
      * The configuration instance
      */
@@ -39,12 +39,11 @@ public class Configuration {
     /**
      * The properties file object.
      */
-    private static final File configFile
-            = new File(CONFIG_DIRECTORY, CONFIG_FILENAME);
+    private static final File configFile = new File(CONFIG_DIRECTORY, CONFIG_FILENAME);
 
     /**
-     * The Logger instance. All log messages from this class are routed through
-     * this member.
+     * The Logger instance. All log messages from this class are routed through this
+     * member.
      */
     private static final Logger logger = Logger.getLogger(Configuration.class.getName());
 
@@ -54,19 +53,19 @@ public class Configuration {
     private Configuration() {
         props = loadProperties();
     }
-    
+
     /**
      * Gets the singleton instance of configuration.
      * 
      * @return the Configuration object
      */
     public static Configuration getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Configuration();
         }
         return instance;
     }
-    
+
     /**
      * Get a specific property
      *
@@ -76,11 +75,11 @@ public class Configuration {
     public String getProperty(String name) {
         return props.getProperty(name);
     }
-    
+
     /**
      * Get a specific property
      *
-     * @param name the name of the property to return
+     * @param name         the name of the property to return
      * @param defaultValue the default value if property is not set
      * @return the value of the property specified in name
      */
@@ -89,15 +88,15 @@ public class Configuration {
     }
 
     /**
-     * Set a configuration property of name to the specified value. Then save
-     * the configuration.
+     * Set a configuration property of name to the specified value. Then save the
+     * configuration.
      *
-     * @param name the property name
+     * @param name  the property name
      * @param value the property value
      */
     public void setProperty(String name, String value) {
         props.setProperty(name, value);
-        //saveProperties();
+        // saveProperties();
     }
 
     /**
@@ -113,8 +112,7 @@ public class Configuration {
                     loadedProps.load(fis);
                     fis.close();
                 } catch (FileNotFoundException ex) {
-                    logger.log(Level.SEVERE,
-                            "File not found after existence verfied.", ex);
+                    logger.log(Level.SEVERE, "File not found after existence verfied.", ex);
                 } catch (IOException ex) {
                     logger.log(Level.SEVERE, "File data could not be read.", ex);
                 }
@@ -144,7 +142,7 @@ public class Configuration {
             logger.log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public String toString() {
         return props.toString();

@@ -17,7 +17,6 @@ public class App {
     private final static Logger logger = Logger.getLogger(App.class.getName());
 
     private enum Context {
-
         PERSIST_CONFIG, CONFIRM_CONFIG, ROOT
     }
 
@@ -96,7 +95,7 @@ public class App {
             try {
                 input = r.readLine().trim();
             } catch (IOException ex) {
-                //logger.log(Level.SEVERE, null, ex);
+                // logger.log(Level.SEVERE, null, ex);
                 System.out.println("\nError input caught!");
             }
         } while (!input.equals("quit") && !input.equals("exit"));
@@ -106,7 +105,7 @@ public class App {
         try {
             return playcer.sync();
         } catch (Exception ex) {
-            //logger.log(Level.INFO, null, ex);
+            // logger.log(Level.INFO, null, ex);
             System.out.println("Error: " + ex.getMessage());
         }
         return false;
