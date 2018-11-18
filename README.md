@@ -1,10 +1,13 @@
 # spotripy
-Download free music from a spotify playlist using mp3skull.com.
+
+Download spotify playlist freely.
 
 ## Help
-Enter "help" in the program console ($) to see list of available commands.
+
+Enter "help" in the program console (\$) to see list of available commands.
 
 ### Spotify OAuth Access Token
+
 Even if you aren't a developer you can get a free token from spotify.
 It lasts about an hours which is more than enough time for single use.
 
@@ -13,8 +16,8 @@ It lasts about an hours which is more than enough time for single use.
 3. Select the relevant scopes on the popup e.g. playlist-read-private
 4. Click the "REQUEST TOKEN" button
 5. Login and/or Accept the authorisation request
-6. Use the generated OAuth Token in the program i.e. $ token {OAUTH_ACCESS_TOKEN}
+6. Use the generated OAuth Token in the program i.e. \$ token {OAUTH_ACCESS_TOKEN}
 
 ## TODO
-1. Prevent mp3skull.com from treating program as robot. Maybe simulate normal usage with waits.
-2. Much better download management. Search for a library don't reinvent the wheel.
+
+1. Much better download management. Search for a library don't reinvent the wheel.

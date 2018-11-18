@@ -15,7 +15,7 @@ import org.jsoup.select.Elements;
  *
  * @author Emmanuel
  */
-public class Mp3Skull {
+public class Mp3Skull implements ChanteyFinder {
 
     private static final double MIN_FILE_SIZE = 3.0; // 2MB
     private static final String sizePatternName = "number";
@@ -28,7 +28,7 @@ public class Mp3Skull {
     /**
      * User agent to identify the request. So that mp3skull.com server plays nice.
      */
-    public static String USER_AGENT = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11";
+    private static String USER_AGENT = "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11";
 
     /**
      * Get the search session token.
@@ -36,7 +36,7 @@ public class Mp3Skull {
      * @return the search token
      * @throws IOException when unable to connect
      */
-    public static String getSearchToken() throws IOException {
+    private static String getSearchToken() throws IOException {
         return getSearchToken(false);
     }
 
@@ -47,7 +47,7 @@ public class Mp3Skull {
      * @return the search token
      * @throws IOException when unable to connect
      */
-    public static String getSearchToken(boolean refresh) throws IOException {
+    private static String getSearchToken(boolean refresh) throws IOException {
         if (refresh || searchToken == null) {
             Response res = Jsoup.connect(url).followRedirects(true).userAgent(USER_AGENT).execute();
             Mp3Skull.url = res.url().toString(); // update url to redirect site
@@ -57,14 +57,7 @@ public class Mp3Skull {
         return searchToken;
     }
 
-    /**
-     * Get the download URL for the specified song.
-     *
-     * @param songName the name of the song to search for including artists
-     * @return download URL as string
-     * @throws IOException when unable to connect
-     */
-    public static String getDownloadLink(String songName) throws IOException {
+    public String getDownloadLink(String songName) throws IOException {
         // call search token earlier to also update Mp3Skull URL
         // https://mp3skull.com/mp3/song_name.html doesn't need search token
         String curSearchToken = getSearchToken();
@@ -97,7 +90,7 @@ public class Mp3Skull {
      * @param mp3title the title found on mp3skull
      * @return true if the song name and mp3 title have the same flags.
      */
-    public static boolean acceptable(String songname, String mp3title) {
+    private static boolean acceptable(String songname, String mp3title) {
         String[] filters = { "instrumental", "remix" };
         for (String filter : filters) {
             String regex = "(?i).*" + filter + ".*";

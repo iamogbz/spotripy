@@ -144,6 +144,7 @@ public class PlaylistSyncer {
     }
 
     public boolean sync() throws Exception {
+        ChanteyFinder finder = new Mp3Skull();
         if (downloadSavePath == null || downloadSavePath.isEmpty()) {
             throw new PlaylistSyncException("Download folder not supplied");
         } else {
@@ -190,7 +191,7 @@ public class PlaylistSyncer {
                     playlistFolder.mkdir(); // FileUtils creates folder on download
                     loadCache(folderName); // load cacheDb of download urls
                     // --- loop through tracks and try downloading
-                    logger.info("Searching mp3skull for download links");
+                    logger.log(Level.INFO, "Searching for download links using: {0}", new Object[] { finder });
                     for (String track : playlist.tracks) {
                         File mp3File = new File(
                                 playlistFolder.getAbsolutePath() + File.separator + sanitize(track) + "." + FILE_EXT);
@@ -204,7 +205,7 @@ public class PlaylistSyncer {
                             String downloadLink = cacheDb.get(track);
                             if (downloadLink == null) {
                                 try {
-                                    downloadLink = Mp3Skull.getDownloadLink(track);
+                                    downloadLink = finder.getDownloadLink(track);
                                 } catch (IOException ex) {
                                     // logger.log(Level.INFO, null, ex);
                                 }
