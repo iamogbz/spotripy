@@ -22,7 +22,6 @@ public class App {
     }
 
     public static void main(String[] args) {
-
         System.out.println("Welcome to Spotripy");
         System.out.println("Visit https://github.com/iamogbz/spotripy for documentation");
         BufferedReader r = new BufferedReader(new InputStreamReader(System.in));

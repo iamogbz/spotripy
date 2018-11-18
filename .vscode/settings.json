@@ -1,0 +1,3 @@
+{
+  "code-runner.executorMap.java": "cd $workspaceRoot/src; and javac ./spotripy/controller/App.java -sourcepath .; and java spotripy.controller.App -cp ."
+}
