@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package spotripy.model;
+package com.spotripy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONObject;
+import com.spotripy.SpotifyREST.Playlist;
 
-import spotripy.model.SpotifyREST.Playlist;
+import org.json.JSONObject;
 
 /**
  *

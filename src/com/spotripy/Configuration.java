@@ -1,4 +1,4 @@
-package spotripy.model;
+package com.spotripy;
 
 import java.io.File;
 import java.io.FileInputStream;
