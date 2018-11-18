@@ -48,21 +48,21 @@ public class App {
                         playcer.showConfig();
                         System.out.println("Confirm configuration: (yes|no)");
                     }
-                } else if (input.toLowerCase().startsWith("playlist ")) {
+                } else if (input.startsWith("playlist ")) {
                     String[] parts = input.substring("playlist ".length()).split(" ");
                     playcer.userID = (parts.length > 0) ? parts[0] : playcer.userID;
                     playcer.playlistID = (parts.length > 1) ? parts[1] : playcer.playlistID;
-                } else if (input.toLowerCase().startsWith("folder ")) {
+                } else if (input.startsWith("folder ")) {
                     PlaylistSyncer.downloadSavePath = input.substring("folder ".length());
-                } else if (input.toLowerCase().startsWith("token ")) {
+                } else if (input.startsWith("token ")) {
                     PlaylistSyncer.spotifyAccessToken = input.substring("token ".length());
-                } else if (input.toLowerCase().startsWith("load config")) {
+                } else if (input.startsWith("load config")) {
                     playcer.loadConfig();
-                } else if (input.toLowerCase().startsWith("save config")) {
+                } else if (input.startsWith("save config")) {
                     playcer.saveConfig();
-                } else if (input.toLowerCase().startsWith("show config")) {
+                } else if (input.startsWith("show config")) {
                     playcer.showConfig();
-                } else if (input.toLowerCase().startsWith("help")) {
+                } else if (input.startsWith("help")) {
                     System.out.println("Commands");
                     System.out.println("start rip"); // ask to confirm configuration
                     System.out.println("start rip!"); // ask to confirm save of configuration
@@ -75,6 +75,8 @@ public class App {
                     System.out.println("save config");
                     System.out.println("show config");
                     System.out.println("quit | exit");
+                } else if (input.length() > 0) {
+                    System.out.println("Command not recognised. Enter 'help' for a list of supported commands");
                 }
             } else if (context.equals(Context.CONFIRM_CONFIG)) {
                 if (input.equals("yes")) {
