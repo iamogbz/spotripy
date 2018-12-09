@@ -2,9 +2,48 @@
 
 Download spotify playlist freely
 
+## Run
+
+Make commands to get started
+
+Freshly build and run app
+
+```
+make run-build
+```
+
+Remove previously build files
+
+```
+make clean
+```
+
+Build app from source files
+
+```
+make build
+```
+
+Run app from build files
+
+```
+make run
+```
+
+Rebuild app in fresh environment
+
+```
+make clean-build
+```
+
+
 ## Help
 
-Enter "help" in the program console (\$) to see list of available commands.
+From in the app console, enter "help" to see list of available commands.
+
+```
+$> help
+```
 
 ### Spotify OAuth Access Token
 
