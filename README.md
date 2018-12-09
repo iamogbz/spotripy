@@ -42,7 +42,7 @@ make clean-build
 From in the app console, enter "help" to see list of available commands.
 
 ```
-$> help
+$ help
 ```
 
 ### Spotify OAuth Access Token
